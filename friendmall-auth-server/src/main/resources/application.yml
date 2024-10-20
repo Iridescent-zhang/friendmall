@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: friendmall-auth-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  thymeleaf:
+    cache: false
+  redis:
+    host: 192.168.56.10
+    port: 6379
+  session:
+    store-type: redis
+  #    zipkin 可视化链路追踪
+  zipkin:
+    base-url: "http://192.168.56.10:9411/"
+    discovery-client-enabled: false  # 关闭自己的服务发现功能，不要被 Spring Cloud 发现
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1  # 数据采样率
+server:
+  port: 18000
+  servlet:
+    session:
+      timeout: 30m
+
+
+

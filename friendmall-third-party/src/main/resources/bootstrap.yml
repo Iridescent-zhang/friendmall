@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: friendmall-third-party
+  cloud:
+    nacos:
+      config:
+        namespace: 628388df-d9c8-4064-b97a-f4a1b8ab3af1
+        server-addr: 127.0.0.1:8848
+        ext-config[0]:
+          data-id: oss.yaml
+          group: DEFAULT_GROUP
+          refresh: true

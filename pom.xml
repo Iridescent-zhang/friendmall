@@ -16,6 +16,10 @@
         <module>friendmall-ware</module>
         <module>friendmall-order</module>
         <module>friendmall-member</module>
+        <module>renren-fast</module>
+        <module>renren-generator</module>
+        <module>friendmall-common</module>
+        <!--<module>friendmall-gateway</module>-->
     </modules>
 
 </project>

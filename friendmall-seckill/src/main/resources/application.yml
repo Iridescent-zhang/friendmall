@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: friendmall-seckill
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  redis:
+    host: 192.168.56.10
+    port: 6379
+  session:
+    store-type: redis
+  rabbitmq:
+    host: 192.168.56.10
+    port: 5672
+    virtual-host: /
+  thymeleaf:
+    cache: false
+  #    zipkin 可视化链路追踪
+  zipkin:
+    base-url: "http://192.168.56.10:9411/"
+    discovery-client-enabled: false  # 关闭自己的服务发现功能，不要被 Spring Cloud 发现
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1  # 数据采样率
+
+
+server:
+  port: 25000
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+
+logging:
+  level:
+    org.springframework.cloud.openfeign: debug  # 这俩是链路追踪时打印日志查看信息
+    org.springframework.cloud.sleuth: debug
+

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: friendmall-coupon
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        # 默认命名空间为public
+        namespace: be7c49a9-b1ba-46f0-bb84-37b34578c292  # 用其他的要写id才行
+        # 默认配置文件扩展名为 properties
+        file-extension: yaml
+        # 默认前缀本就是${spring.application.name}
+#        prefix: ${spring.application.name}
+        # 默认组为DEFAULT_GROUP
+        group: prod
+        # 扩展配置
+        extension-configs[0]:
+          data-id: datasource.yaml  # 这里的Data ID是直接加.yaml后缀指定配置文件的，且不需要指定file-extension
+          group: dev
+          refresh: true  # 默认为false，表示在nacos处修改配置文件后是否自动刷新
+        extension-configs[1]:
+          data-id: mybatis.yaml
+          group: dev
+          refresh: true
+        extension-configs[2]:
+          data-id: other.yaml
+          group: dev
+          refresh: true

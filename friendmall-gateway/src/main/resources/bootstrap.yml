@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: 498cd746-c7ed-4f75-ac28-673b5efbb498
+        group: dev
+        file-extension: yaml
+  application:
+    name: friendmall-gateway  # 这个一定得配，不然找不到nacos上的配置文件，因为默认按这个名字去找

@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: friendmall-product
+  cloud:
+    nacos:
+      config:
+        namespace: f446dcc4-2d44-4c4e-b07e-fc1b1ef1d4d3
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        server-addr: 127.0.0.1:8848

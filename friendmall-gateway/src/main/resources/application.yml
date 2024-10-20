@@ -1,0 +1,117 @@
+spring:
+  application:
+    name: friendmall-gateway
+  #    zipkin 可视化链路追踪
+  zipkin:
+    base-url: "http://192.168.56.10:9411/"
+    discovery-client-enabled: false  # 关闭自己的服务发现功能，不要被 Spring Cloud 发现
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1  # 数据采样率
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+#      routes[0]:
+#        id: qq_route
+#        uri: https://www.qq.com
+#        predicates:
+#          - Query=url,ss
+#      routes[1]:
+#        id: test_route
+#        uri: https://www.weibo.com
+#        predicates:
+#          - Query=url,weibo
+      routes[0]:
+        id: product_route  # 标识符罢了，可能还有其他作用
+        uri: lb://friendmall-product  # 负载均衡：服务名
+        predicates:  # 中文名为断言，其实就是看字符串匹配否
+          - Path=/api/product/**,/hello
+        filters:
+          - RewritePath=/api/(?<segment>.*),/$\{segment}  # 意味着api开始要截串
+
+      routes[1]:
+        id: coupon_route  # 标识符罢了，可能还有其他作用
+        uri: lb://friendmall-coupon  # 负载均衡：服务名
+        predicates: # 中文名为断言，其实就是看字符串匹配否
+          - Path=/api/coupon/**
+        filters:
+          - RewritePath=/api/(?<segment>.*),/$\{segment}  # 意味着api开始要截串
+
+      routes[2]:
+        id: third_party_route
+        uri: lb://friendmall-third-party  # 负载均衡：服务名
+        predicates:
+          - Path=/api/thirdparty/**
+        filters:
+          - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}  # 相当于明写的如/api/thirdparty/都会被截掉，只剩下后面的动态路径
+      routes[3]:
+        id: member_route
+        uri: lb://friendmall-member  # 负载均衡：服务名
+        predicates:
+          - Path=/api/member/**
+        filters:
+          - RewritePath=/api/(?<segment>.*),/$\{segment}  # 相当于明写的如/api都会被截掉，只剩下后面的动态路径
+      routes[4]:
+        id: ware_route
+        uri: lb://friendmall-ware  # 负载均衡：服务名
+        predicates:
+          - Path=/api/ware/**
+        filters:
+          - RewritePath=/api/(?<segment>.*),/$\{segment}  # 相当于明写的如/api都会被截掉，只剩下后面的动态路径
+      routes[5]:
+        id: admin_route
+        uri: lb://renren-fast  # 负载均衡：服务名
+        predicates:
+          - Path=/api/**  # 这样写会拦截所有带api的请求，所以把它写在最后面
+        filters:
+          - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}  # 这里多了路径重写，补写了/renren-fast
+      routes[6]:  # 配合Nginx，从此以后域名 friendmall.com 就可以直接代替网关的路径了，记得关代理（因为代理用的DNS不认识friendmall.com这个域名，只有本地认识）
+        id: friendmall_host_route
+        uri: lb://friendmall-product  # 负载均衡：服务名
+        predicates:
+          - Host=friendmall.com,item.friendmall.com  # 使用新的断言规则-Host域名断言，这个域名下的就给我路由到上面那地方。**.表示前面可以有子域名
+      routes[7]: # 配合Nginx，从此以后域名 friendmall.com 就可以直接代替网关的路径了，记得关代理（因为代理用的DNS不认识friendmall.com这个域名，只有本地认识）
+        id: friendmall_search_route
+        uri: lb://friendmall-search  # 负载均衡：服务名
+        predicates:
+          - Host=search.friendmall.com  # 使用新的断言规则-Host域名断言，这个域名下的就给我路由到上面那地方。**.表示前面可以有子域名
+      routes[8]: # 配合Nginx，从此以后域名 friendmall.com 就可以直接代替网关的路径了，记得关代理（因为代理用的DNS不认识friendmall.com这个域名，只有本地认识）
+        id: friendmall_auth_route
+        uri: lb://friendmall-auth-server  # 负载均衡：服务名
+        predicates:
+          - Host=auth.friendmall.com  # 使用新的断言规则-Host域名断言，这个域名下的就给我路由到上面那地方。**.表示前面可以有子域名
+      routes[9]: # 配合Nginx，从此以后域名 friendmall.com 就可以直接代替网关的路径了，记得关代理（因为代理用的DNS不认识friendmall.com这个域名，只有本地认识）
+        id: friendmall_cart_route
+        uri: lb://friendmall-cart  # 负载均衡：服务名
+        predicates:
+          - Host=cart.friendmall.com  # 使用新的断言规则-Host域名断言，这个域名下的就给我路由到上面那地方。**.表示前面可以有子域名
+      routes[10]: # 配合Nginx，从此以后域名 friendmall.com 就可以直接代替网关的路径了，记得关代理（因为代理用的DNS不认识friendmall.com这个域名，只有本地认识）
+        id: friendmall_order_route
+        uri: lb://friendmall-order  # 负载均衡：服务名
+        predicates:
+          - Host=order.friendmall.com  # 使用新的断言规则-Host域名断言，这个域名下的就给我路由到上面那地方。**.表示前面可以有子域名
+      routes[11]: # 配合Nginx，从此以后域名 friendmall.com 就可以直接代替网关的路径了，记得关代理（因为代理用的DNS不认识friendmall.com这个域名，只有本地认识）
+        id: friendmall_member_route
+        uri: lb://friendmall-member  # 负载均衡：服务名
+        predicates:
+          - Host=member.friendmall.com  # 使用新的断言规则-Host域名断言，这个域名下的就给我路由到上面那地方。**.表示前面可以有子域名
+      routes[12]: # 配合Nginx，从此以后域名 friendmall.com 就可以直接代替网关的路径了，记得关代理（因为代理用的DNS不认识friendmall.com这个域名，只有本地认识）
+        id: friendmall_seckill_route
+        uri: lb://friendmall-seckill  # 负载均衡：服务名
+        predicates:
+          - Host=seckill.friendmall.com  # 使用新的断言规则-Host域名断言，这个域名下的就给我路由到上面那地方。**.表示前面可以有子域名
+
+
+## 前端项目发的请求都带 /api  然后这里设置带api的转给renren-fast这个服务
+## http://localhost:88/api/验证码.jpg -> http://localhost:8080/renren-fast/验证码.jpg  8080就是renrenfast后台的地址，但还要加renren-fast才行
+## http://localhost:88/api/product/category/list/tree -> http://localhost:10000/product/category/list/tree
+## http://localhost:88/api/thirdparty/oss/policy -> http://localhost:20000/oss/policy  客户端给网关发一个oss上传请求，网关重写url并转发请求给第三方服务thirdparty模块
+
+server:
+  port: 88
+
+

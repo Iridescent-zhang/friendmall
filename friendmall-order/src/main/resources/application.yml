@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.56.10:3306/friendmall_oms?useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver # 有待商榷
+  rabbitmq:
+    host: 192.168.56.10
+    port: 5672
+    virtual-host: /
+#    开启发送端确认
+    publisher-confirms: true
+#    开启发送端消息抵达队列的确认
+    publisher-returns: true
+#    只要抵达队列，以异步方式优先回调我们这个returnConfirm
+    template:
+      mandatory: true
+#    开启消费者端手动确认模式
+    listener:
+      simple:
+        acknowledge-mode: manual
+  thymeleaf:
+    cache: false
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: friendmall-order
+  session:
+    store-type: redis
+  redis:
+    host: 192.168.56.10
+    port: 6379
+#    日期格式化
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+  #    zipkin 可视化链路追踪
+  zipkin:
+    base-url: "http://192.168.56.10:9411/"
+    discovery-client-enabled: false  # 关闭自己的服务发现功能，不要被 Spring Cloud 发现
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1  # 数据采样率
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+server:
+  port: 9000
+

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: friendmall-cart
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  thymeleaf:
+    cache: false  # 方便开发过程中看一些东西 上线要为true
+  redis:
+    host: 192.168.56.10
+  #    zipkin 可视化链路追踪
+  zipkin:
+    base-url: "http://192.168.56.10:9411/"
+    discovery-client-enabled: false  # 关闭自己的服务发现功能，不要被 Spring Cloud 发现
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1  # 数据采样率
+server:
+  port: 30000
+# 配置 feign 默认请求时间仅几秒钟，配置请求时间长一些(毫秒)
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+
