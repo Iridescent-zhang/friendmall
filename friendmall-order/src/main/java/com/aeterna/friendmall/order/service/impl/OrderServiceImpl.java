@@ -108,12 +108,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         MemberRespVo memberRespVo = LoginUserInterceptor.loginUser.get();
         System.out.println("主线程..."+Thread.currentThread().getId());
 
-        // 获得老请求的请求参数，创建异步线程时都放到那些异步线程的RequestContextHolder里，让每个新线程都共享之前的请求数据
+        // 获得老请求的请求参数，创建异步线程时都放到那些异步线程的RequestContextHolder里，让每个新线程都共享之前的请求数据。这个老指的是比我创建的feign新请求老，也就是指调用这个confirmOrder()的请求
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
         CompletableFuture<Void> getAddressFuture = CompletableFuture.runAsync(() -> {
             System.out.println("第一个副线程..."+Thread.currentThread().getId());
-            // 在每个新的线程里面都把老请求放进去，然后在各自feign调用时创建新请求时，通过这个【RequestContextHolder，里面共享数据用的就是ThreadLocal】获得老请求的请求头
+            /**
+             * 在每个新的线程里面都把老请求放进去，然后在各自feign调用时创建新请求时，通过这个【RequestContextHolder，里面共享数据用的就是ThreadLocal】获得老请求的请求头，
+             *      正如ThreadLocal是每个线程都有的，RequestContextHolder也是每个线程都有的，每个新线程都保存一份老请求的请求参数requestAttributes，因为feign调用时还是在同一个线程内，所以可以获得这些数据
+             */
             RequestContextHolder.setRequestAttributes(requestAttributes);
             // 1、远程查询用户所有的收货地址列表
             List<MemberAddressVo> address = memberFeignService.getAddress(memberRespVo.getId());
@@ -225,14 +228,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         /**
          * 1、验令牌【验证和删除令牌是原子的】
          *    要求redis查令牌，和删除令牌这二者合起来为一个原子操作，原因如下：
-         *      比如两个很近的请求，第一个查到了并且对比成功，执行业务并删除请求，结果请求还没删第二个也一查，发现redis中还有并且也匹配，然后执行业务，这样就会执行两次业务
+         *      比如两个很近的请求，第一个查到了并且对比成功，执行业务并删除令牌，结果令牌还没删第二个也一查，发现redis中还有并且也匹配，然后执行业务，这样就会执行两次业务
          *      所以让查令牌和删令牌成为一个原子操作，这样第一个请求查了并删完第二个请求才会去查，注意理解原子(相当于二者合为一个整体)
          *    之前做过了，我们只需要给redis发送一个Lua脚本让它执行就行
          */
         String orderToken = vo.getOrderToken();
         MemberRespVo memberRespVo = LoginUserInterceptor.loginUser.get();
         String redisToken = redisTemplate.opsForValue().get(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberRespVo.getId());
-        // Lua 脚本，返回0/1，0：令牌失败，1：对比成功并且删除令牌成功
+        // Lua 脚本，返回0/1，0：删除令牌失败，1：对比成功并且删除令牌成功
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
         Long result = redisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class), Arrays.asList(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberRespVo.getId()), orderToken);
         if (result == 0L) {

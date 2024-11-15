@@ -102,6 +102,7 @@ public class SeckillServiceImpl implements SeckillService {
         log.error("getCurrentSeckillSkusResource被限流了...");
         return null;
     }
+
     /**
      * 返回当前时间可以参与秒杀的商品信息
      */
@@ -125,7 +126,7 @@ public class SeckillServiceImpl implements SeckillService {
                 long end = Long.parseLong(s[1]);
                 if (time>=start && time<=end) {
                     // 2、获取这个秒杀场次需要的商品信息
-                    List<String> range = redisTemplate.opsForList().range(key, -100, 100);
+                    List<String> range = redisTemplate.opsForList().range(key, 0, 100);
                     BoundHashOperations<String, String, String> hashOps = redisTemplate.boundHashOps(SECKILL_CACHE_PREFIX);
                     List<String> list = hashOps.multiGet(range);
                     if (list != null) {
@@ -270,7 +271,7 @@ public class SeckillServiceImpl implements SeckillService {
             BoundHashOperations<String, Object, Object> hashOps = redisTemplate.boundHashOps(SECKILL_CACHE_PREFIX);
             session.getRelationSkus().stream().forEach(seckillSkuVo -> {
 
-                // 4、当前商品的随机码  seckill?skuId=1&key=token，随机码是一种保护机制，秒杀开始的时候带上才能参与秒杀，指代skuId不能参与，防止被爆破
+                // 4、当前商品的随机码  seckill?skuId=1&key=token，随机码是一种保护机制，秒杀开始的时候带上才能参与秒杀，只带skuId不能参与，防止被爆破
                 String token = UUID.randomUUID().toString().replace("-", "");
 
                 // TODO 幂等性处理，没有这个key才执行，由于不同场次可能上架同一skuId的商品，所以我们用来维护幂等性状态的key应该设为秒杀场次_skuId
@@ -298,7 +299,7 @@ public class SeckillServiceImpl implements SeckillService {
 
                     String jsonString = JSON.toJSONString(redisTo);
 //                    redisTo.setSeckillLimit(seckillSkuVo.getSeckillCount());
-                    // TODO 幂等性处理，由于不同场次可能上架统一skuId的商品，所以我们用来维护幂等性状态的key应该设为秒杀场次_skuId
+                    // TODO 幂等性处理，由于不同场次可能上架同一skuId的商品，所以我们用来维护幂等性状态的key应该设为秒杀场次_skuId
                     hashOps.put(seckillSkuVo.getPromotionSessionId().toString()+"_"+seckillSkuVo.getSkuId().toString(), jsonString);
 
                     /**

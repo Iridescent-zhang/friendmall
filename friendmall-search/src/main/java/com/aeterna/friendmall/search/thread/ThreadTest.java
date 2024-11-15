@@ -107,17 +107,17 @@ public class ThreadTest {
         /**
          * 两个任务的合并，两个任务完成后执行第三个任务
          * 1. runAfterBothAsync 不感知两个任务的结果，只执行第三个任务，且无返回值
-         *         .runAfterBothAsync(future02, ()->{
+         *         future01.runAfterBothAsync(future02, ()->{
          *             // void run();
          *             System.out.println("任务3开始...");
          *         }, executor)
          * 2. thenAcceptBothAsync 接收两个任务的返回值，执行第三个任务，无返回值
-         *         .thenAcceptBothAsync(future02, (f1,f2)->{
+         *         future01.thenAcceptBothAsync(future02, (f1,f2)->{
          *             // accept(T t, U u)
          *             System.out.println("任务3开始...之前的结果为："+f1+"-->"+f2);
          *         }, executor)
          * 3. thenCombineAsync 可以接收两个任务的返回值，执行第三个任务，并且有返回值
-         *         .thenCombineAsync(future02, (f1, f2) -> {
+         *         future01.thenCombineAsync(future02, (f1, f2) -> {
          *             // R apply(T t, U u);
          *             return "之前的两个结果：" + f1 + "-->" + f2 + "-->Hello";
          *         }, executor)

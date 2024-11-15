@@ -181,6 +181,8 @@ public class IndexController {
      * 闭锁 RCountDownLatch , 类似 JUC 下的 CountDownLatch
      * 模拟全部都执行完了才行
      * 放假,锁门 五个班全部走完才能锁大门
+     *
+     * 只有gogogo()被调用5次后 lockDoor()上锁之后的代码才能继续执行
      */
     @GetMapping("/lockDoor")
     @ResponseBody

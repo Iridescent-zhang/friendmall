@@ -52,7 +52,7 @@ public class SeckillSkuScheduled {
     @Scheduled(cron = "*/3 * * * * ?")
 //    @Scheduled(cron = "0 0 3 * * ?")
     public void uploadSeckillSkuLatest3Days(){
-        // 1、虽然是三点上架，但加入今天有要秒杀的商品，其实在三天前已经被上架了，无需处理
+        // 1、虽然是三点上架，但假如今天有要秒杀的商品，其实在三天前已经被上架了，无需处理
         log.info("上架秒杀的商品信息");
 
         // 上分布式锁

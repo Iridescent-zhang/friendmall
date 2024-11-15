@@ -12,6 +12,7 @@
         <result property="icon" column="icon"/>
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
+
     <!-- resultType 返回集合 里面的元素的类型-->
     <!-- 因为SpuItemAttrGroupVo里面有嵌套的属性 所以需要自定义封装结果集resultMap -->
     <resultMap id="spuItemAttrGroupVo" type="com.aeterna.friendmall.product.vo.SpuItemAttrGroupVo">

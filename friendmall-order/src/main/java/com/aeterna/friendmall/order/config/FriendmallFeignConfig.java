@@ -43,7 +43,7 @@ public class FriendmallFeignConfig {
                     System.out.println("RequestInterceptor线程..."+Thread.currentThread().getId());
                     HttpServletRequest request = attributes.getRequest();
                     if (request != null) {
-                        // 同步request请求头数据【主要是cookie】到要创建的新请求template里
+                        // 同步request请求头数据【主要是cookie】到用来创建新请求的template里
                         String cookie = request.getHeader("Cookie");
                         template.header("Cookie", cookie);
                     }

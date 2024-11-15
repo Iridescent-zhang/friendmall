@@ -28,8 +28,8 @@ import java.util.Map;
 public class MyMQConfig {
 
     /**
-     * @Bean Queue Binding Exchange，容器中的这些都会在 RabbitMQ 中自动创建（RabbitMQ没有）
-     * RabbitMQ 只要有，@Bean声明属性发生变化也是不能覆盖的
+     * @Bean Queue Binding Exchange，容器中的这些都会在 RabbitMQ 中自动创建（前提是RabbitMQ中没有）
+     * RabbitMQ 只要有，@Bean声明属性发生变化也是不能覆盖的，得先去删除
      */
     @Bean
     public Queue orderDelayQueue(){

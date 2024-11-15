@@ -52,6 +52,7 @@ public class OAuth2Controller {
     public String gitee(@RequestParam("code") String code, HttpSession httpSession, HttpServletResponse httpServletResponse) throws Exception {
         // 1、根据code换取accessToken，这个code码会变的，用一次就会变，所以要接变化的值
         /**
+         * 要发这么个请求
          * https://gitee.com/oauth/token?
          * grant_type=authorization_code
          * &code=705ae5acef8f6dca622ac3a0fea579e2c27173997884438efd4f8556bd3c11e1
@@ -71,7 +72,7 @@ public class OAuth2Controller {
         body.put("client_id","0c7b4697de75d983a873f9e495125e22e0942f09dd4ffa2c779d1574f0170ddf");
         body.put("client_secret","55c7a771af4d421086f4f545e55b10d252fa7d2486549da0d78c3c6e57d439f6");
         body.put("grant_type","authorization_code");
-        body.put("redirect_uri","http://auth.friendmall.com/oauth2.0/gitee/success");
+        body.put("redirect_uri","http://auth.friendmall.com/oauth2.0/gitee/success");  // 认证完成后的跳转链接
         body.put("code",code);
         HttpResponse response = HttpUtils.doPost("https://gitee.com", "/oauth/token", "post", new HashMap<>(), new HashMap<>(), body);
 
@@ -115,7 +116,7 @@ public class OAuth2Controller {
                  * new Cookie("JSESSIONID", "dddd").setDomain();
                  * httpServletResponse.addCookie();
                  * cookie是在响应里面携带过去的，tomcat在第一次使用session时就创建了cookie，默认的作用域是当前域名
-                 * TODO：1.默认发的令牌的session作用域时当前域，我们要改为父域
+                 * TODO：1.默认发的令牌的session作用域是当前域，我们要改为父域
                  * TODO：2.使用JSON的序列化方式来序列化session的对象数据到redis中
                  */
                 // SpringSession都整合了以上两个问题(不同服务共享session，同服务分布式下共享session(因为session就是内存，是存在特定机器上的，考虑到负载均衡...))

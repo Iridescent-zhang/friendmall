@@ -10,7 +10,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 /**
  * 1、整合Sentinel
  *   1）导入依赖
- *   2）下载sentinel控制台，可视化调整监控
+ *   2）下载sentinel控制台，可视化调整监控，java -jar .\sentinel-dashboard-1.6.3.jar --server.port=8333
  *   3）配置sentinel控制台地址信息，之后可以在控制台调整参数，但是默认所有流控设置保存在内存中，重启会失效
  *   4）
  * 2、每个微服务都导入信息审计模块
